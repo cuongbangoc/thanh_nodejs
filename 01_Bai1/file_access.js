@@ -1,7 +1,7 @@
-var fs = require("fs");
+var fs = require("fs"); // Gọi hàm fs có sẵn của node js
 
 // mo file data.txt 
-fs.open("data.txt", "r+", function(err, file){
+fs.open("data.txt", "r+", function(err, file){ // r+: là chỉ để đọc, tạo 1 callback function để thông báo lỗi hoặc mở thành công
 	if(err){
 		console.log("open file is error");
 		return;
