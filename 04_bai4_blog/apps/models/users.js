@@ -1,3 +1,5 @@
+// Database <=> MYSQL
+// Tam thoi su dung mang thay cho database
 var users = [
     {
         "name": "Thanh Ba Ngoc",
@@ -11,7 +13,7 @@ var users = [
     }
 ];
 
-
+// Ham tim va lay ra user theo email va pass
 function get_user_by_email_and_password(email, password){
     for(let i = 0; i < users.length; i++){
         // Tim user
