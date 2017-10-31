@@ -2,9 +2,11 @@ var express = require("express");
 
 var router = express.Router();
 
-const user_model = require("../models/users");
+const user_model = require("../models/users"); // require ket qua cua file users.js
+// khi co duong dan /admin thi require file admin.js
 router.use("/admin", require(__dirname+"/admin.js"));
 router.use("/blog", require(__dirname+"/blog.js"));
+router.use("/list_user", require(__dirname + "/list_user.js"));
 
 router.get("/", function(req, res){
 	let query = req.query;
@@ -18,6 +20,11 @@ router.get("/", function(req, res){
 router.get("/login", function(req, res){
     res.render("login");
 });
+
+// Render trang signup
+router.get("/signup", function(req, res){
+	res.render("signup");
+})
 
 // Bat su kien click login
 router.post("/do_login", function(req, res){
@@ -41,7 +48,8 @@ router.post("/do_login", function(req, res){
         });
     }else{
         // - Neu email va pass ton tai trong mang users thi login thanh cong
-        res.redirect("/admin");
+        //res.redirect("/admin");
+        res.redirect("/list_user");
     }
 });
 
@@ -49,4 +57,29 @@ router.get("/", function(req, res){
 	res.json({"message":"this is home page"});
 });
 
+
+// Bat su kien click sign up
+router.post("/do_signup", function(req,res){
+	// Lay du lieu tu form
+	let form_data = req.body;
+	console.log(form_data);
+	let name = form_data.name;
+	let email = form_data.email;
+	let password = form_data.password;
+
+	// Yeu cau model thu hien insert user moi vao user
+	// user_model.insert_users(name, email, password);
+
+	// Yeu cau model thuc hien check neu khong trung email thi inser them user
+	let user = user_model.check_insert_users(name, email, password);
+
+	if(user == null){
+		res.json({
+			message: "Sign up failed, email is created"
+		});
+	}else{
+		res.redirect("/list_user");
+	}
+
+});
 module.exports = router;
