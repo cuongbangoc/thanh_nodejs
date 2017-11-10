@@ -32,6 +32,11 @@ router.get("/check_id", function(req,res){
 	res.render("check_id.ejs");
 });
 
+//render trang update user
+router.get("/update_user", function(req, res){
+	res.render("update_user.ejs");
+});
+
 // Bat su kien click login
 router.post("/do_login", function(req, res){
     // Thuc hien login sau khi click Login
@@ -106,4 +111,27 @@ router.get("/do_checkid", function(req,res){
 		});
 	}
 });
+
+// lay req tu update_user:
+router.post("/do_updateuser", function(req, res){
+	let form_data = req.body;
+	let id = form_data.id;
+	let name = form_data.name;
+	let email = form_data.email;
+	let password = form_data.password;
+
+	let user = user_model.update_user(id, name, email, password);
+
+	if (user == null){
+		res.json({
+			"code":1,
+			"message" : "user not found"
+		});
+	}else{
+		res.json({
+			"user" : user
+		});
+	}
+});
+
 module.exports = router;

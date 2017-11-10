@@ -67,11 +67,25 @@ function check_id(id){
     return null;
 }
 
+// ham update user
+function update_user(id, name, email, password){
+    for (let i = 0; i< users.length; i++){
+        if (users[i].id == id){
+            users[i].name = name;
+            users[i].email = email;
+            users[i].password = password;
+            return users[i]
+        }
+    }
+    return null;
+}
+
 const user_model = {};
 user_model.get_user_by_email_and_password = get_user_by_email_and_password;
 user_model.get_all_users = get_all_users;
 user_model.insert_users = insert_users;
 user_model.check_insert_users = check_insert_users;
 user_model.check_id = check_id;
+user_model.update_user = update_user;
 
 module.exports = user_model;
