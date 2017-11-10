@@ -26,6 +26,12 @@ router.get("/signup", function(req, res){
 	res.render("signup");
 })
 
+// render trang checkid
+
+router.get("/check_id", function(req,res){
+	res.render("check_id.ejs");
+});
+
 // Bat su kien click login
 router.post("/do_login", function(req, res){
     // Thuc hien login sau khi click Login
@@ -81,5 +87,23 @@ router.post("/do_signup", function(req,res){
 		res.redirect("/list_user");
 	}
 
+});
+
+// lay req tu check_id.ejs
+router.get("/do_checkid", function(req,res){
+	let form_data = req.query;
+	let id = form_data.id;
+	console.log(id);
+
+	let user = user_model.check_id(id);
+	console.log(user);
+
+	if (user == null){
+		res.redirect("/signup");
+	}else{
+		res.json({
+			"user": user
+		});
+	}
 });
 module.exports = router;

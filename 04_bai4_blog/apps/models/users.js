@@ -2,11 +2,13 @@
 // Tam thoi su dung mang thay cho database
 var users = [
     {
+        "id" : 1,
         "name": "Thanh Ba Ngoc",
         "email": "thanhbangoc@gmail.com",
         "password": "123456"
     },
     {
+        "id" : 2,
         "name": "Cuong Ba Ngoc",
         "email": "cuongbangoc@gmail.com",
         "password": "12345678"
@@ -55,10 +57,21 @@ function get_all_users(){
 }
 
 
+// ham check id user
+function check_id(id){
+    for (let i = 0; i< users.length; i++){
+        if (users[i].id == id){
+            return users[i];
+        }
+    }
+    return null;
+}
+
 const user_model = {};
 user_model.get_user_by_email_and_password = get_user_by_email_and_password;
 user_model.get_all_users = get_all_users;
 user_model.insert_users = insert_users;
 user_model.check_insert_users = check_insert_users;
+user_model.check_id = check_id;
 
 module.exports = user_model;
