@@ -37,6 +37,11 @@ router.get("/update_user", function(req, res){
 	res.render("update_user.ejs");
 });
 
+//render trang tim email
+router.get("/find_email", function(req, res){
+	res.render("timemail.ejs");
+});
+
 // Bat su kien click login
 router.post("/do_login", function(req, res){
     // Thuc hien login sau khi click Login
@@ -79,18 +84,39 @@ router.post("/do_signup", function(req,res){
 	let password = form_data.password;
 
 	// Yeu cau model thu hien insert user moi vao user
-	// user_model.insert_users(name, email, password);
+	//let promise_insert = user_model.insert_users(name, email, password);
 
 	// Yeu cau model thuc hien check neu khong trung email thi inser them user
-	let user = user_model.check_insert_users(name, email, password);
+	let promise_insert = user_model.check_insert_users(name, email, password);
 
-	if(user == null){
+	promise_insert.then(function(user_id){
+		if(user_id == null){
+			res.json({
+				message: "Sign up failed, email is created"
+			});
+		}else{
+			res.json({
+			"id user": user_id
+			});
+		}
+		
+	}).catch(function(err){
+		console.log(err);
 		res.json({
 			message: "Sign up failed, email is created"
 		});
-	}else{
-		res.redirect("/list_user");
-	}
+	})
+	// if(ID_user == null){
+	// 	res.json({
+	// 		message: "Sign up failed, email is created"
+	// 	});
+	// }else{
+	// 	res.json({
+	// 		"id user": ID_user
+	// 	});
+	// 	// In ID cua user vua insert
+	// 	// res.redirect("/list_user");
+	// }
 
 });
 
@@ -133,5 +159,24 @@ router.post("/do_updateuser", function(req, res){
 		});
 	}
 });
+
+// lay req tu find_email:
+router.post("/do_find_email", function(req, res){
+	let form_data = req.body;
+	let name = form_data.name;
+
+	let user = user_model.find_email(name);
+
+	if (user == null){
+		res.json({
+			"message": "None accound availabale"
+		});
+	}else{
+		res.json({
+			"user": user
+		});
+	}
+})
+
 
 module.exports = router;

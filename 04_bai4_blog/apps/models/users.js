@@ -1,19 +1,42 @@
 // Database <=> MYSQL
 // Tam thoi su dung mang thay cho database
-var users = [
-    {
-        "id" : 1,
-        "name": "Thanh Ba Ngoc",
-        "email": "thanhbangoc@gmail.com",
-        "password": "123456"
-    },
-    {
-        "id" : 2,
-        "name": "Cuong Ba Ngoc",
-        "email": "cuongbangoc@gmail.com",
-        "password": "12345678"
+// var users = [
+//     {
+//         "id" : 1,
+//         "name": "Thanh Ba Ngoc",
+//         "email": "thanhbangoc@gmail.com",
+//         "password": "123456"
+//     },
+//     {
+//         "id" : 2,
+//         "name": "Cuong Ba Ngoc",
+//         "email": "cuongbangoc@gm9ail.com",
+//         "password": "12345678"
+//     }
+// ];
+
+const mysql = require("mysql");
+
+
+const connection = mysql.createConnection({
+  host     : '127.0.0.1',
+  port     : 3306,
+  user     : 'kaiko_user',
+  password : '12345678',
+  database : 'kaiko'
+});
+
+connection.connect(function(err){
+    if(err){
+        console.log(err);
+        console.log("Ket noi CDSL that bai");
+    }else{
+        console.log("Ket noi thanh cong CSDL");
     }
-];
+
+
+});
+
 
 // Ham tim va lay ra user theo email va pass
 function get_user_by_email_and_password(email, password){
@@ -28,28 +51,62 @@ function get_user_by_email_and_password(email, password){
 }
 
 // Insert them user
+// INSERT INTO users (name, email, password) VALUES ("ba ngoc thanh", "thanhbangoc@gmail.com", "thanh123");
 function insert_users(name, email, password){
-    users.push({
-        "name": name,
-        "email": email,
-        "password": password
+   
+
+    let user = {
+        name: name,
+        email: email,
+        password: password
+    };
+
+    return new Promise(function(resolve, reject){
+        let query = connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+          if (error){
+             reject(error);
+          }else{
+            resolve(results.insertId);
+          }
+          // Neat!
+        });
     });
+
+    
 }
 
 // Kiem tra xem neu khong trung email thi insert them euser
 function check_insert_users(name, email, password){
-    for (let i = 0; i< users.length; i++){
-        if (users[i].email == email){
-            return null;
-        }
-    }
-    users.push({
-        "name": name,
-        "email": email,
-        "password": password
+
+    let user = {
+        name: name,
+        email: email,
+        password: password
+    };
+    return new Promise(function(resolve, reject){
+        let query = connection.query('SELECT * FROM users WHERE email = ?', [email], function (error, results, fields) {
+            if (error){
+                reject(error);
+            }else{
+                if (results.length > 0){
+                    resolve(null);
+                }else{
+                     let query = connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+                        if (error){
+                             reject(error);
+                        }else{
+                             resolve(results.insertId);
+                        }
+                     }); 
+                }
+                
+               
+
+            }
+        });
+
     });
-    return users;
-}
+ }
 
 // lay tat ca user ra
 function get_all_users(){
@@ -71,10 +128,18 @@ function check_id(id){
 function update_user(id, name, email, password){
     for (let i = 0; i< users.length; i++){
         if (users[i].id == id){
-            users[i].name = name;
-            users[i].email = email;
-            users[i].password = password;
-            return users[i]
+            users.splice(i, 1);
+            return users;
+        }
+    }
+    return null;
+}
+
+// ham tim email:
+function find_email(name){
+    for (let i = 0; i<users.length; i++){
+        if (users[i].name == name){
+            return users[i];
         }
     }
     return null;
@@ -87,5 +152,6 @@ user_model.insert_users = insert_users;
 user_model.check_insert_users = check_insert_users;
 user_model.check_id = check_id;
 user_model.update_user = update_user;
+user_model.find_email = find_email;
 
 module.exports = user_model;
