@@ -47,7 +47,7 @@ router.post("/do_login", function(req, res){
     // Thuc hien login sau khi click Login
     // B1: Lay thong tin tu Client trong Form
     let form_data = req.body;
-    console.log(form_data);
+    // console.log(form_data);
     // B2: Goi model de tim kiem user co email va password duoc truyen len
     // - Neu email va pass ton tai trong mang users thi login thanh cong
     // - Neu email hoac pass ko ton tai trong mang users thi login khong thanh cong
@@ -55,18 +55,33 @@ router.post("/do_login", function(req, res){
     let password = form_data.password;
 
     // Yeu cau model thuc hien tim kiem user theo email va pass
-    let user = user_model.get_user_by_email_and_password(email, password);
+    let promise_user = user_model.get_user_by_email_and_password(email, password);
 
-    if(user == null){
-        // - Neu email hoac pass ko ton tai trong mang users thi login khong thanh cong
-        res.json({
-            message: "Login failed, email and password invalid"
-        });
-    }else{
-        // - Neu email va pass ton tai trong mang users thi login thanh cong
-        //res.redirect("/admin");
-        res.redirect("/list_user");
-    }
+    promise_user.then(function(user){
+    	if (user == null){
+    		res.json({
+    			message: " Login failed, email and password invalid"
+    		});
+    	}else{
+    		res.redirect("/list_user");
+    	}
+    }).catch(function(err){
+    	console.log(err);
+    	res.json({
+    		message: "Login failed, email and password invalid"
+    	});
+    })
+
+    // if(user == null){
+    //     // - Neu email hoac pass ko ton tai trong mang users thi login khong thanh cong
+    //     res.json({
+    //         message: "Login failed, email and password invalid"
+    //     });
+    // }else{
+    //     // - Neu email va pass ton tai trong mang users thi login thanh cong
+    //     //res.redirect("/admin");
+    //     res.redirect("/list_user");
+    // }
 });
 
 router.get("/", function(req, res){

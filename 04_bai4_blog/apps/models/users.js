@@ -15,18 +15,18 @@
 //     }
 // ];
 
-const mysql = require("mysql");
+const mysql = require("mysql"); // gọi hàm mysql
 
 
-const connection = mysql.createConnection({
-  host     : '127.0.0.1',
-  port     : 3306,
-  user     : 'kaiko_user',
-  password : '12345678',
-  database : 'kaiko'
+const connection = mysql.createConnection({  // Kết nối code với mysql trên database
+  host     : '127.0.0.1', // địa chỉ http hoặc ip
+  port     : 3306,        // cổng nghe
+  user     : 'kaiko_user',  // user để truy cập
+  password : '12345678',     // pass để truy cập
+  database : 'kaiko'         // database muốn truy cập
 });
 
-connection.connect(function(err){
+connection.connect(function(err){   // call back function để xem connect có thành công không
     if(err){
         console.log(err);
         console.log("Ket noi CDSL that bai");
@@ -40,14 +40,35 @@ connection.connect(function(err){
 
 // Ham tim va lay ra user theo email va pass
 function get_user_by_email_and_password(email, password){
-    for(let i = 0; i < users.length; i++){
-        // Tim user
-        if(users[i].email == email && users[i].password == password){
-            return users[i];
-        }
-    }
 
-    return null;
+    let user = {
+        email: email,
+        password: password
+    };
+    return new Promise(function(resolve, reject){
+        // select * from user where email = "thaoabc@gmail.com AND password = 123456
+        let query = connection.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password], function(error, results, fields){
+            if (error){
+                console.log(error);
+                reject(error);
+            }else{
+                console.log(results);
+                if (results.length > 0){
+                    resolve(results);
+                }else{
+                    resolve(null);
+                }
+            }
+        });
+    });
+    // for(let i = 0; i < users.length; i++){
+    //     // Tim user
+    //     if(users[i].email == email && users[i].password == password){
+    //         return users[i];
+    //     }
+    // }
+
+    // return null;
 }
 
 // Insert them user
@@ -61,7 +82,8 @@ function insert_users(name, email, password){
         password: password
     };
 
-    return new Promise(function(resolve, reject){
+// dùng promise để hứng kết quả của hàm insert_users do nếu return nhiều lần sẽ thành call back hell
+    return new Promise(function(resolve, reject){  
         let query = connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
           if (error){
              reject(error);
@@ -110,7 +132,15 @@ function check_insert_users(name, email, password){
 
 // lay tat ca user ra
 function get_all_users(){
-    return users;
+    return new Promise(function(resolve, reject){
+        let query = connection.query('SELECT * FROM users', [], function(error,results,fields) {
+             if (error){
+                reject(error);
+             }else{
+                resolve(results);
+             }
+        });
+    });
 }
 
 
