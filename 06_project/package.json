@@ -9,6 +9,7 @@
   "author": "thanh ba",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "config": "^1.27.0",
     "ejs": "^2.5.7",

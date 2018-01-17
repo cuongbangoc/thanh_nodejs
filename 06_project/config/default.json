@@ -9,6 +9,6 @@
 		"database": "blog",
 		"user": "kaiko_user",
 		"password": "12345678"
-
-	}
+	},
+	"salt": 10
 }

@@ -2,7 +2,9 @@ var express = require("express");
 
 var router = express.Router();
 
-var user_md = require("../models/users.js")
+var user_md = require("../models/users.js");
+
+var helper = require("../helpers/helper.js")
 
 // /admin/
 router.get("/", function(req, res){
@@ -26,20 +28,28 @@ router.post("/signup", function(req, res){
 
 	// insert to DB
 
+	var password = helper.hash_password(user.passwd);
+
 	user = {
 		email: user.email,
-		password: user.passwd,
+		password: password,
 		first_name: user.firstname,
 		last_name: user.lastname
 	};
 
 	let results = user_md.addUser(user);
 
-	if (!results){
-		res.render("signup.ejs", {data: {error: "could not insert to DB"}});	
-	}else{
-		res.json({message: "insert success data to DB"});	
-	}
+	results.then(function(data){
+		res.json({message: "insert success data to DB"});
+	}).catch(function(err){
+		res.render("signup.ejs", {data: {error: "could not insert to DB"}});
+	});
+
+	// if (!results){
+	// 	res.render("signup.ejs", {data: {error: "could not insert to DB"}});	
+	// }else{
+	// 	res.json({message: "insert success data to DB"});	
+	// }
 
 });
 
