@@ -10,7 +10,11 @@ function hash_password (password){
 	return hash;
 }
 
+function compare_password(password, hash){
+	return bcrypt.compareSync(password, hash); // return true neu hash chua password, va return false neu khong chua password
+}
 
 module.exports = {
-	hash_password: hash_password
+	hash_password: hash_password,
+	compare_password: compare_password
 }

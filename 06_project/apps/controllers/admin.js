@@ -40,7 +40,7 @@ router.post("/signup", function(req, res){
 	let results = user_md.addUser(user);
 
 	results.then(function(data){
-		res.json({message: "insert success data to DB"});
+		res.redirect("/admin/signin");
 	}).catch(function(err){
 		res.render("signup.ejs", {data: {error: "could not insert to DB"}});
 	});
@@ -50,7 +50,36 @@ router.post("/signup", function(req, res){
 	// }else{
 	// 	res.json({message: "insert success data to DB"});	
 	// }
-
 });
 
+router.get("/signin", function(req, res){
+	res.render("signin.ejs", {data: {}});
+});
+
+router.post("/signin", function(req, res){
+	var params = req.body;
+
+	if (params.email.trim().length == 0){
+		res.render("signin.ejs", {data: {error: "Please enter email"}});
+	}else{
+		var data = user_md.getUserByEmail(params.email);
+
+		if (data){
+			data.then(function(users){
+				let user = users[0];
+				
+				let status = helper.compare_password(params.password, user.password);
+				console.log(status);
+				if(!status){
+					res.render("signin.ejs", {data: {error: "password is incorrect"}});
+				}else{
+					res.redirect("/admin");
+				}
+			});
+
+		}else{
+			res.render("signin.ejs", {data: {error: "Email not exists"}});
+		}
+	}
+})
 module.exports = router;

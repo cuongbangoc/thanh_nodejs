@@ -10,5 +10,6 @@
 		"user": "kaiko_user",
 		"password": "12345678"
 	},
-	"salt": 10
+	"salt": 10,
+	"secret_key": "secretkey"
 }

@@ -18,6 +18,23 @@ function addUser (user){
      }
 }
 
+function getUserByEmail(email){
+    if (email){
+        return new Promise (function(resole, reject){
+            let query = conn.query('SELECT * FROM users WHERE ?', {email: email}, function(err, results, fields){
+                if (err){
+                    reject(err);
+                }else{
+                    resole(results);
+                }
+            });
+        });
+    }else{
+        return false
+    }
+}
+
 module.exports = {
-    addUser: addUser
+    addUser: addUser,
+    getUserByEmail: getUserByEmail
 }
