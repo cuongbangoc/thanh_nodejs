@@ -3,12 +3,24 @@ var express = require("express");
 var router = express.Router();
 
 var user_md = require("../models/users.js");
+var post_md = require("../models/post.js");
 
-var helper = require("../helpers/helper.js")
+var helper = require("../helpers/helper.js");
 
 // /admin/
 router.get("/", function(req, res){
-	res.json({"message":"this is admin page"});
+	// res.json({"message":"this is admin page"});
+	var data = post_md.getAllPost();
+	data.then(function(posts){
+		let data = {
+			posts: posts,
+			error: false
+		}
+		res.render("admin/dashboard.ejs", {data: data});
+	}).catch(function(error){
+		res.render("admin/dashboard.ejs", {data: {error: "Get posts data is error"}});
+	});
+	
 });
 
 router.get("/signup", function(req, res){
@@ -81,5 +93,25 @@ router.post("/signin", function(req, res){
 			res.render("signin.ejs", {data: {error: "Email not exists"}});
 		}
 	}
-})
+});
+
+router.get("/post/new", function(req, res){
+	res.render("admin/post/new.ejs", {data: {err: false}});
+});
+router.post("/post/new", function(req,res){
+	var params = req.body;
+
+	 params.created_at = new Date();
+	 params.updated_at = new Date();
+	let data = post_md.addPost(params);
+
+	data.then(function(data){
+		res.redirect("/admin");
+	}).catch(function(err){
+		let data = {
+			err: false
+		}
+		res.render("admin/post/new.ejs", {data: data});
+	});
+});
 module.exports = router;
