@@ -23,6 +23,7 @@ router.get("/", function(req, res){
 	
 });
 
+// SIGNUP
 router.get("/signup", function(req, res){
 	res.render("signup.ejs", {data: {}});
 });
@@ -64,6 +65,8 @@ router.post("/signup", function(req, res){
 	// }
 });
 
+
+// SIGNIN
 router.get("/signin", function(req, res){
 	res.render("signin.ejs", {data: {}});
 });
@@ -95,23 +98,112 @@ router.post("/signin", function(req, res){
 	}
 });
 
+
+// ADD NEW POST
 router.get("/post/new", function(req, res){
-	res.render("admin/post/new.ejs", {data: {err: false}});
+	res.render("admin/post/new.ejs", {data: {error: false}});
 });
 router.post("/post/new", function(req,res){
 	var params = req.body;
 
-	 params.created_at = new Date();
-	 params.updated_at = new Date();
-	let data = post_md.addPost(params);
-
-	data.then(function(data){
-		res.redirect("/admin");
-	}).catch(function(err){
+	// neu ma khong nhap title cua bai viet thi se thong bao loi yeu cau nhap tilte truoc khi insert post
+	if (params.title.trim().length == 0){
 		let data = {
-			err: false
+			error: "Please enter the title of new post"
 		}
-		res.render("admin/post/new.ejs", {data: data});
+		res.render("admin/post/new.ejs", {data: data}); // render lai trang new post va thong bao loi
+
+	// neu da co title roi thi moi insert post	
+	}else{
+		params.created_at = new Date();
+	 	params.updated_at = new Date();
+		let data = post_md.addPost(params);
+
+		data.then(function(data){
+			res.redirect("/admin");
+		}).catch(function(err){
+			let data = {
+				error: false
+			};
+			res.render("admin/post/new.ejs", {data: data});
+		});
+	}
+
+	 
+});
+
+// Trang cap nhat bai viet
+router.get("/post/edit/:id", function(req, res){
+	let id = req.params.id; // Params
+	// let id = req.query.id; // Query
+
+	let data_db = post_md.getPostById(id);
+	data_db.then(function(posts){
+		let post = posts[0];
+
+		let data_view_edit = {
+			post: post,
+			error: false
+		};
+
+		res.render("admin/post/edit", {data_view_edit: data_view_edit});
+	}).catch(function(err){
+		let data_view_edit = {
+			error: "Could not get post data with id = " + id
+		};
+
+		res.render("admin/post/edit", {data_view_edit: data_view_edit});
 	});
+});
+
+// Controller xu ly update bai post
+router.put("/post/edit", function(req, res){
+	let params = req.body;
+
+	let data_db = post_md.updatePost(params);
+	if(!data_db){
+		res.json({
+			code: 500,
+			message: "Error DB"
+		});
+	}else{
+		data_db.then(function(results){
+			res.json({
+				code: 200,
+				message: "success"
+			});
+		}).catch(function(error){
+			res.json({
+				code: 500,
+				message: "Error DB 2"
+			});
+		});
+	}
+});
+
+// controller xu ly delete bai post
+router.delete("/post/delete", function(req, res){
+	let id = req.body.id;
+
+	let data_db = post_md.deletePost(id);
+
+	if(!data_db){
+		res.json({
+			code: 500,
+			message: "Error DB"
+		});
+	}else{
+		data_db.then(function(results){
+			res.json({
+				code: 200,
+				message: "delete success"
+			});
+		}).catch(function(error){
+			res.json({
+				code: 500,
+				message: "Error DB 2"
+			});
+		});
+	}
 });
 module.exports = router;
