@@ -4,7 +4,8 @@ const express = require('express'),
     logger = require('../helpers/logger'),
     router = express.Router(),
     config = require('config'),
-    db = require('../models');
+    token_repo = require("../repositories/token_repository"),
+    user_repo = require("../repositories/user_repository");
 
 let password_helper = require("../helpers/password_helper");
 let token_helper = require("../helpers/token_helper");
@@ -13,6 +14,7 @@ router.post("/login", function(req, res) {
     let email = req.body.email;
     let password = req.body.password;
 
+    // Check parameters
     if(!email || !password){
         return res.status(406).json({
             error_code: 406,
@@ -20,16 +22,17 @@ router.post("/login", function(req, res) {
         });
     }
 
-    db.User.findOne({
-        email: email
-    }, "_id email firstname lastname password")
-    .then(function (user) {
-        if(!user){
+    // Get User by Email
+    let user_data = user_repo.findByEmail(email);
+    user_data.then(function(user) {
+        if (!user) {
             return res.status(404).json({
                 error_code: 404,
                 message: "User not found"
             });
         }
+
+        // Check password
         let is_valid_password = password_helper.compare_password(password, user.password);
         if (!is_valid_password) {
             return res.status(406).json({
@@ -38,15 +41,19 @@ router.post("/login", function(req, res) {
             });
         }
 
+        // Create Token with user information
         user = user.toObject();
         delete user.password;
         let access_token = token_helper.generate_token(user);
-        let token = new db.Token({
+        let token = {
             user: user._id,
             token: access_token
-        });
+        };
 
-        token.save().then(function(new_token) {
+        // Save token to DB
+        let create_token_data = token_repo.create(token);
+
+        create_token_data.then(function (new_token) {
             return res.status(200).json({
                 error_code: 200,
                 token: access_token
@@ -80,9 +87,8 @@ router.post("/register", function(req, res) {
         });
     }
 
-    db.User.findOne({
-        email: email
-    }).then(function (user) {
+    let user_data = user_repo.findByEmail(email);
+    user_data.then(function (user) {
         if (user) {
             return res.status(404).json({
                 error_code: 404,
@@ -93,14 +99,16 @@ router.post("/register", function(req, res) {
             let salt = password_helper.get_salt(saltRounds);
             let hash = password_helper.hash_password(password, salt);
 
-            let new_user = new db.User({
+            let new_user = {
                 email: email,
                 password: hash,
                 firstname: firstname,
                 lastname: lastname
-            });
+            };
 
-            new_user.save().then(function(u) {
+            let create_user_data = user_repo.create(new_user);
+
+            create_user_data.then(function(u) {
                 return res.status(200).json({
                     error_code: 200,
                     message: "Success"

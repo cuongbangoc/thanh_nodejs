@@ -1,15 +1,16 @@
 'use strict';
 const express = require('express'),
-    db = require('../../models'),
+    user_repo = require("../../repositories/user_repository"),
     logger = require('../../helpers/logger'),
     router = express.Router();
 
 // get a user by id
 router.get('/get/:id', function(req, res) {
     logger.debug('Get User By Id', req.params.id);
-    db.User.findOne({
-        _id: req.params.id
-    }).then(function(user) {
+
+    let id = req.params.id;
+    let user_data = user_repo.findById(id);
+    user_data.then(function(user) {
         // remove security attributes
         user = user.toObject();
         if (user) {
@@ -20,7 +21,7 @@ router.get('/get/:id', function(req, res) {
             error_code: 200,
             user: user
         });
-    }).catch(function(e) {
+    }).catch(function (e) {
         logger.error(e);
         res.status(500).json({
             message: "Error, could not find user",
@@ -30,31 +31,22 @@ router.get('/get/:id', function(req, res) {
 });
 
 // get list of users
-router.get('/list/:page/:limit', function(req, res) {
-    let limit = (req.params.limit)? parseInt(req.params.limit): 10;
-    let skip = (req.params.page)? limit * (req.params.page - 1): 0;
-    db.User.count({}, function(err, c) {
-        db.User
-        .find()
-        .skip(skip)
-        .limit(limit)
-        .sort({'_id': 'desc'})
-        .then(function(users) {
-            let ret = {
-                count: c,
-                rows: users
-            };
-            res.status(200).json({
-                message: "success",
-                error_code: 200,
-                data: ret
-            });
-        }).catch(function(e) {
-            logger.error(e);
-            res.status(500).json({
-                message: "Error, could not find users",
-                error_code: 500
-            });
+router.get('/list', function(req, res) {
+    let limit = (req.query.limit) ? parseInt(req.query.limit): 10;
+    let skip = (req.query.page) ? limit * (req.query.page - 1): 0;
+
+    let user_data = user_repo.findAll();
+    user_data.then(function(users) {
+        res.status(200).json({
+            message: "success",
+            error_code: 200,
+            users: users
+        });
+    }).catch(function (e) {
+        logger.error(e);
+        res.status(500).json({
+            message: "Error, could not find users",
+            error_code: 500
         });
     });
 });
