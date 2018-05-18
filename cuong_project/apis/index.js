@@ -18,7 +18,7 @@ router.use(function(req, res, next) {
 
 router.use('/auth', require('./auth_api'));
 
-router.all('/api/v1/users*', [require('../middlewares/auth')]);
+// router.all('/api/v1/users*', [require('../middlewares/auth')]);
 router.use('/api/v1', require('./v1'));
 
 module.exports = router;
