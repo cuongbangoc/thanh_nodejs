@@ -1,0 +1,38 @@
+{
+    "server": {
+        "host": "0.0.0.0",
+        "port": 5000
+    },
+    "logs": {
+        "level": "debug",
+        "handleExceptions": false
+    },
+    "unauthorization": [
+        "/swagger",
+        "/favicon.ico",
+        "/docs"
+    ],
+    "token_expire": 86400,
+    "time_format": "YYYY-MM-DD H:mm:ss:SSS",
+    "db": {
+        "uri": "mongodb://ds251518.mlab.com:51518/cuongbangoc",
+        // "uri": "mongodb://192.168.100.82:27017/cuongbangoc",
+        "options": {
+            "auth": {
+                "user": "cuongbangoc",
+                "password": "2Lj2UkqXymn6"
+            },
+            "autoIndex": false, // Don't build indexes
+            "reconnectTries": 50,
+            "reconnectInterval": 500, // Reconnect every 500ms
+            "poolSize": 10, // Maintain up to 10 socket connections
+            "bufferMaxEntries": 0
+        }
+    },
+    "salt_factor": 12,
+    "jwt": {
+        "jwt_secret": "helloworld",
+        "expired_at": 1,
+        "algorithm": "HS512"
+    }
+}

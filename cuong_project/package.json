@@ -1,0 +1,41 @@
+{
+  "name": "backend-nodejs-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha test/**/*.spec.js --timeout 10000"
+  },
+  "author": "Cuong Ba",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.4.2",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
+    "config": "^1.21.0",
+    "crypto": "^1.0.1",
+    "express": "^4.14.0",
+    "helmet": "^3.5.0",
+    "js-yaml": "^3.5.5",
+    "jsonwebtoken": "^7.3.0",
+    "lodash": "^4.15.0",
+    "moment": "^2.14.1",
+    "mongoose": "^5.0.7",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "passport-local": "^1.0.0",
+    "pg": "^6.1.2",
+    "q": "^1.4.1",
+    "request": "^2.74.0",
+    "sequelize": "^3.30.2",
+    "swagger-editor": "~2.9.9",
+    "underscore": "*",
+    "validator": "^5.6.0",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.2.0"
+  }
+}
