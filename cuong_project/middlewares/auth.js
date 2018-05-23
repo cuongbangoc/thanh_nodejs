@@ -10,9 +10,12 @@ module.exports = function(req, res, next) {
         return next();
     }
 
+    // Links dc dac cach cho qua
     let unauthorization = config.get('unauthorization');
-    if (_.indexOf(unauthorization, req.url) < 0) {
-        let t = req.get('Authorization');
+    let is_daccach = _.indexOf(unauthorization, req.url);
+    if ( is_daccach < 0) {
+        // Get token from Client
+        let t = req.get('Authorization'); // req.headers.authorization
         if (!t) {
             logger.debug('Access Denied', req.url);
             return res.status(401).json({
@@ -20,7 +23,7 @@ module.exports = function(req, res, next) {
                 error_code: 401
             });
         }
-        t = t.replace('Bearer ', '');
+        // t = t.replace('Bearer ', '');
         db.Token.findOne({
             token: t
         }).then(function(token) {

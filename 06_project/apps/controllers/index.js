@@ -191,7 +191,11 @@ router.post("/do_find_email", function(req, res){
 			"user": user
 		});
 	}
-})
+});
+
+router.get("/chat", function(req, res){
+	res.render("chat.ejs");
+});
 
 
 module.exports = router;

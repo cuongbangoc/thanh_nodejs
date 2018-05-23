@@ -14,6 +14,9 @@ fs.readdirSync(__dirname)
 })
 .forEach(function(file) {
     let model = require(path.join(__dirname, file));
+    // db.User = require("user.js");
+    // db.Token = 
+    // db.Lophoc
     db[model.modelName] = model;
 });
 

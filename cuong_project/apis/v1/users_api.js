@@ -1,17 +1,27 @@
+// Cái này để làm gì??????
+
 'use strict';
 const express = require('express'),
     user_repo = require("../../repositories/user_repository"),
+
+    // Cái này để làm gì ????
     logger = require('../../helpers/logger'),
     router = express.Router();
 
 // get a user by id
 router.get('/get/:id', function(req, res) {
+
+    // Cái này để làm gì??
     logger.debug('Get User By Id', req.params.id);
 
     let id = req.params.id;
     let user_data = user_repo.findById(id);
     user_data.then(function(user) {
+
         // remove security attributes
+
+        // Cái này để làm gì???
+        // => Chuyen tu Object Mongoose sang Object Javascript
         user = user.toObject();
         if (user) {
             delete user.password;
@@ -32,8 +42,10 @@ router.get('/get/:id', function(req, res) {
 
 // get list of users
 router.get('/list', function(req, res) {
-    let limit = (req.query.limit) ? parseInt(req.query.limit): 10;
-    let skip = (req.query.page) ? limit * (req.query.page - 1): 0;
+
+    // Cái này để làm gì???
+    // let limit = (req.query.limit) ? parseInt(req.query.limit): 10;
+    // let skip = (req.query.page) ? limit * (req.query.page - 1): 0;
 
     let user_data = user_repo.findAll();
     user_data.then(function(users) {
@@ -51,4 +63,10 @@ router.get('/list', function(req, res) {
     });
 });
 
+
+// Update User
+router.put('/update', function(req, res){
+    let params = req.body;
+    console.log(req.user);
+});
 module.exports = router;

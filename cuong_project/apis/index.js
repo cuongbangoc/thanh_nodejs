@@ -8,6 +8,7 @@ router.use(function(req, res, next) {
         return next();
     }
 
+
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -18,7 +19,7 @@ router.use(function(req, res, next) {
 
 router.use('/auth', require('./auth_api'));
 
-// router.all('/api/v1/users*', [require('../middlewares/auth')]);
+router.all('/api/v1*', [require('../middlewares/auth')]);
 router.use('/api/v1', require('./v1'));
 
 module.exports = router;

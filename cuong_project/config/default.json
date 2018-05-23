@@ -16,6 +16,7 @@
     "time_format": "YYYY-MM-DD H:mm:ss:SSS",
     "db": {
         "uri": "mongodb://ds251518.mlab.com:51518/cuongbangoc",
+       
         // "uri": "mongodb://192.168.100.82:27017/cuongbangoc",
         "options": {
             "auth": {
@@ -32,7 +33,7 @@
     "salt_factor": 12,
     "jwt": {
         "jwt_secret": "helloworld",
-        "expired_at": 1,
+        "expired_at": 86400,
         "algorithm": "HS512"
     }
 }

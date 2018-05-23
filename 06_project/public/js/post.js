@@ -27,6 +27,8 @@ function bindEvents(){
 			type: "PUT",
 			data: body,
 			dataType: "json",
+
+			// Nếu controller nhận data và xử lý thành công thì trả về 
 			success: function(res){
 				console.log(res);
 				// Neu thanh cong

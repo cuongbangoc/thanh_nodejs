@@ -36,28 +36,28 @@ let lophocB = new lophoc_model({
     name: "Lop B"
 });
 
-// lophocB.save(function(err, new_lophocA) {
-//     if(!err){
-//         console.log(new_lophocA);
+lophocB.save(function(err, new_lophocA) {
+    if(!err){
+        console.log(new_lophocA);
 
-//         // Insert new hoc sinh who has this lophoc
-//         let hocsinh_A = new hocsinh_model({
-//             name: "Thanh",
-//             address: ["HY", "HN"],
-//             lophoc_id: new_lophocA._id
-//         });
+        // Insert new hoc sinh who has this lophoc
+        let hocsinh_A = new hocsinh_model({
+            name: "Thanh",
+            address: ["HY", "HN"],
+            lophoc_id: new_lophocA._id
+        });
 
-//         hocsinh_A.save(function (err) {
-//             if(err){
-//                 console.error(err);
-//             }else{
-//                 console.log("Insert hoc sinh A success");
-//             }
-//         });
-//     }else{
-//         console.error(err);;
-//     }
-// });
+        hocsinh_A.save(function (err) {
+            if(err){
+                console.error(err);
+            }else{
+                console.log("Insert hoc sinh A success");
+            }
+        });
+    }else{
+        console.error(err);;
+    }
+});
 
 // === Get ALL cach 1 voi callback
 lophoc_model.find({name: "Lop A"}, {_id: 1}, function (err, arr_lophoc) {

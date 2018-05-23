@@ -1,7 +1,6 @@
 {
   "name": "04_bai4_blog",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,12 +8,19 @@
   "author": "thanh ba",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
-    "config": "^1.27.0",
+    "config": "^1.29.4",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
-    "mysql": "^2.15.0"
-  }
+    "mysql": "^2.15.0",
+    "socket.io": "^2.0.4"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "description": ""
 }

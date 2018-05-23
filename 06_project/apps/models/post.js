@@ -4,7 +4,10 @@ var conn = db.getConnection();
 
 function getAllPost(){
 	return new Promise (function(resole, reject){
-            let query = conn.query('SELECT * FROM post', function(err, posts){
+        let sql = "SELECT posts.*, users.first_name AS author FROM posts"
+                + " INNER JOIN users ON posts.user_id = users.id";
+
+            let query = conn.query(sql, function(err, posts){
                 if (err){
                     reject(err);
                 }else{
@@ -17,7 +20,7 @@ function getAllPost(){
 function addPost(params){
 	if(params){
         return new Promise (function(resole, reject){
-            let query = conn.query('INSERT INTO post SET ?', params, function(err, results, fields){
+            let query = conn.query('INSERT INTO posts SET ?', params, function(err, results, fields){
                 if (err){
                     reject(err);
                 }else{
@@ -32,7 +35,7 @@ function addPost(params){
 
 function getPostById(id){
 	return new Promise (function(resole, reject){
-            let query = conn.query('SELECT * FROM post WHERE ?', {id: id}, function(err, posts){
+            let query = conn.query('SELECT * FROM posts WHERE ?', {id: id}, function(err, posts){
                 if (err){
                     reject(err);
                 }else{
@@ -45,7 +48,7 @@ function getPostById(id){
 function updatePost(params){
 	if(params){
         return new Promise (function(resole, reject){
-            let query = conn.query('UPDATE post SET title = ?, content = ?, author = ?, updated_at = ? WHERE id = ?', 
+            let query = conn.query('UPDATE posts SET title = ?, content = ?, author = ?, updated_at = ? WHERE id = ?', 
             	[params.title, params.content, params.author, new Date(), params.id], function(err, results, fields){
                 if (err){
                     reject(err);
@@ -62,7 +65,7 @@ function updatePost(params){
 function deletePost(id){
 	if (id){
 		return new Promise (function(resole, reject){
-            let query = conn.query('DELETE FROM post WHERE id=?', [id], function(err, results, fields){
+            let query = conn.query('DELETE FROM posts WHERE id=?', [id], function(err, results, fields){
                 if (err){
                     reject(err);
                 }else{

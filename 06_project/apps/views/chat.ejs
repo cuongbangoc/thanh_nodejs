@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat Application</title>
+
+	<%- include admin/layout/head %>
+
+	<style type="text/css">
+
+			* { margin: 0; padding: 0; box-sizing: border-box; } 
+	      body { font: 13px Helvetica, Arial; }
+	      form { background: #000; padding: 3px; position: fixed; bottom: 40px; width: 90%; }
+	      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+	      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+	      #messages { list-style-type: none; margin: 0; padding: 0; }
+	      #messages li { padding: 5px 10px; }
+	      #messages li:nth-child(odd) { background: #eee; }
+	</style>
+</head>
+<body>
+	<div class="container">
+
+		<!-- Tạo 1 hàng để nhập text chat -->
+		<ul id="conversation">
+			
+		</ul>
+		<form>
+			<!-- Tạo ô input để nhập nội dung chat -->
+			<input type="text" name="message" id="message">
+			<!-- Tạo nut button để send -->
+			<button class="btn btn-success" id="btn-send">Send</button>
+		</form>
+	</div>
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+	<script type="text/javascript">
+		let socket = io.connect("http://localhost:3000");
+
+		// Thông báo đã kết nối được ở phía client
+		socket.on("connect", function(){
+			console.log("User is conecting");
+
+			// Hỏi tên của người dùng
+			let username = prompt("What is your name");
+
+			// Gửi tên này lên server. Trong socket dùng hàm emit để gửi
+			socket.emit("addUser", username);
+		});
+
+		// LẮng nghe sự kiện update_user
+		socket.on("update_message", function(data){
+			$("#conversation").append("<li> <b>" + data.sender + ": </b>" + data.message + "</li>");
+
+		});
+
+		// Bắt sự kiện click send message
+		$("#btn-send").click(function(e){
+
+			//Lấy nội dung message ra
+			 let message = $("#message").val();
+
+			 //Reset message này về rỗng
+			 // để sau khi click send thì ô nhập tin nhắn về trống 
+			 // để nhập nội dung chat tiếp theo.
+			 $("#message").val("");
+
+			 // Gửi message lên server
+			 if (message.trim().length != 0) { // Nếu message khác rỗng thì gửi lên server
+			 	socket.emit("send_message", message);
+			 } 
+		});
+
+		// Không cho gửi form của btn-send nữa để tránh mỗi lần send phải nhập username lại
+		// Làm bằng cách return false luôn khi gửi form lên
+		$("form").submit(function(){
+			return false
+		});
+
+		// Bắt sự kiện enter để send nội dung chat
+		$("#message").keypress(function(e){
+			// Lấy mã của sự kiện. Mỗi phím đều có 1 cái mã số. Nút enter có mã là 13
+			if (e.wich == 13){
+				$("#btn-send").trigger("click"); // Nếu click enter thì sẽ trigger lại sự kiện btn-send
+			}
+		});
+	</script>
+</body>
+</html>

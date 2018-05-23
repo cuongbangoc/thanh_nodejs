@@ -3,10 +3,15 @@ const Schema = mongoose.Schema;
 
 // Define User Schema
 const User = new Schema({
+    masinhvien:{
+        type: String,
+        require: true,
+        unique: true
+    },
     email: {
         type: String,
-        unique: true,
-        require: true,
+        unique: true, // Email này là duy nhất
+        require: true,// Yêu cầu phải nhập
         lowercase: true
     },
     firstname: String,

@@ -34,7 +34,20 @@ function getUserByEmail(email){
     }
 }
 
+
+function getAllUsers(){
+    return new Promise (function(resole, reject){
+            let query = conn.query('SELECT * FROM users', function(err, users){
+                if (err){
+                    reject(err);
+                }else{
+                    resole(users);
+                }
+            });
+        });
+}
 module.exports = {
     addUser: addUser,
-    getUserByEmail: getUserByEmail
+    getUserByEmail: getUserByEmail,
+    getAllUsers: getAllUsers
 }
