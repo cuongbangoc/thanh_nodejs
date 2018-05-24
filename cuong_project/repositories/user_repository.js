@@ -12,6 +12,10 @@ var UserRepository = {
     findById: function (id) {
         return models.User.findOne({ _id: id });
     },
+    updateUser: function(user, params){
+        return models.User.update({_id: user._id}, {$set: {firstname: params.firstname, lastname: params.lastname,
+             masinhvien: params.masinhvien}});
+    },
     create: function (user) {
         let new_user = new models.User(user);
         return new_user.save();
