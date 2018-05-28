@@ -19,6 +19,9 @@ var UserRepository = {
     create: function (user) {
         let new_user = new models.User(user);
         return new_user.save();
+    },
+    changePassword: function(user, password){
+        return models.User.update({_id: user._id}, {$set: {password: password}});
     }
 }
 
