@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express'),
       foodcategory_repo = require("../../repositories/foodcategory_repository"),
+      logger = require('../../helpers/logger'),
       router = express.Router();
 
 // Add new Food Category
@@ -132,6 +133,41 @@ router.delete("/delete/:id",function(req, res){
         res.status(500).json({
             error_code:500,
             message: "Error delete food category"
+        });
+    });
+});
+
+// Get all food category with page and limit
+router.get("/get_all", function(req, res){
+    let page = req.query.page;
+    let limit = parseInt(req.query.limit);
+    if (!page){
+        page = 1;
+    }
+    if (!limit){
+        limit = 2;
+    }
+    let skip = (parseInt(page) - 1) * limit;
+
+    let foodcategory_data = foodcategory_repo.find(limit, skip);
+    foodcategory_data.then(function(data){
+        if (!data){
+            res.status(404).json({
+                error_code: 404,
+                message: "Could not get food category"
+            });
+        }else{
+            res.status(200).json({
+                code: 200,
+                data: data
+            });
+        }
+    }).catch(function(error){
+        // console.log(error);
+        logger.error(error);
+        res.status(500).json({
+            error_code:500,
+            message: "Error get all food category"
         });
     });
 });

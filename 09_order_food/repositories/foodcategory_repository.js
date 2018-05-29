@@ -12,6 +12,9 @@ var FoodCategoryRepository = {
     },
     updateFoodCategory: function(id, params){
         return models.FoodCategory.update({_id: id}, {$set: {name: params.name}});
+    },
+    find: function(limit, skip){
+        return models.FoodCategory.find().skip(skip).limit(limit);
     }
 }
 
