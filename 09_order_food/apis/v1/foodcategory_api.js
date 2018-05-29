@@ -98,4 +98,41 @@ router.put("/update/:id", function(req, res){
         });
     });
 });
+
+// Delete food category
+router.delete("/delete/:id",function(req, res){
+    let params = req.body;
+    let id = req.params.id;
+
+    let foodcategory_data_1 = foodcategory_repo.findById(id);
+    foodcategory_data_1.then(function(food){
+        if (!food){
+            res.status(404).json({
+                error_code: 404,
+                message: "Not found food category to delete"
+            });
+        }else{
+            food.remove(function(error){
+                if (error){
+                    logger.error(error);
+                    res.status(500).json({
+                        error_code:500,
+                        message: "Could not delete food category by id"
+                    });
+                }else{
+                    res.status(200).json({
+                        code: 200,
+                        message: "Delete success"
+                    });
+                }
+            });
+        }
+    }).catch(function(error){
+        logger.error(error);
+        res.status(500).json({
+            error_code:500,
+            message: "Error delete food category"
+        });
+    });
+});
 module.exports = router;
