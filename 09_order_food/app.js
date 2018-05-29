@@ -67,7 +67,7 @@ let server = app.listen(config.get('server.port'), config.get('server.host'), fu
     let host = server.address().address;
     let port = server.address().port;
     logger.info('Server start at http://%s:%s', host, port);
-    logger.error("AAAA");
+    // logger.error("AAAA");
 });
 
 module.exports = app;

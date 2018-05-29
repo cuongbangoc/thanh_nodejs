@@ -189,7 +189,7 @@ router.post("/change_password", function(req, res){
             });
         });
     }).catch(function(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({
             error_code: 500,
             message: "loi roi get user by id"
