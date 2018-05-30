@@ -13,6 +13,12 @@ const food = new Schema({
         require: true
     },
     unit: String,
+    food_category: {
+        type: Schema.Types.ObjectId,
+        ref: "FoodCategory"
+    },
+    image: String,
+    description: String
 },{
     collection: "foods",
     timestamps: {
