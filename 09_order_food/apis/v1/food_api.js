@@ -41,13 +41,6 @@ router.put("/update/:id", function(req, res){
     let params = req.body;
     let id = req.params.id;
 
-    // if (!params || !params.name){
-    //     return res.status(406).json({
-    //         error_code: 406,
-    //         message: "Missing params"
-    //     });
-    // }
-
     let food_data = food_repo.findById(id);
     food_data.then(function(food){
         if (!food){
@@ -100,6 +93,33 @@ router.put("/update/:id", function(req, res){
         res.status(500).json({
             error_code:500,
             message: "Error update food"
+        });
+    });
+});
+
+// Get one food
+router.get("/get_one/:id", function(req, res){
+    let id = req.params.id;
+
+    let food_data = food_repo.findById(id);
+    food_data.then(function(food){
+        if (!food){
+            res.status(404).json({
+                error_code: 404,
+                message: "Not found food with by id"
+            });
+        }else{
+            res.status(200).json({
+                code: 200,
+                message: "Found food success",
+                data: food
+            });
+        }
+    }).catch(function(error){
+        logger.error(error);
+        res.status(500).json({
+            error_code:500,
+            message: "Error get info food by id"
         });
     });
 });
