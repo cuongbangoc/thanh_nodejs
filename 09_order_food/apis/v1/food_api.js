@@ -123,4 +123,40 @@ router.get("/get_one/:id", function(req, res){
         });
     });
 });
+
+// Get all list food with page and limit
+router.get("/get_All", function(req, res){
+    let page = req.query.page;
+    let limit = parseInt(req.query.limit);
+
+    if (!page){
+        page = 1;
+    }
+    if (!limit){
+        limit = 2;
+    }
+    let skip = (parseInt(page)-1)*limit;
+
+    let food_data = food_repo.find(limit, skip);
+    food_data.then(function(data){
+        if (!data){
+            res.status(404).json({
+                error_code: 404,
+                message: "Could not get list food"
+            });
+        }else{
+            res.status(200).json({
+                code: 200,
+                message: "Get list food success",
+                data: data
+            });
+        }
+    }).catch(function(error){
+        logger.error(error);
+        res.status(500).json({
+            error_code:500,
+            message: "Error get list food"
+        });
+    });
+});
 module.exports = router;

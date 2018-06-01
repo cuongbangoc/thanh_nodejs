@@ -9,6 +9,9 @@ var FoodRepository = {
     },
     findById: function(id){
         return models.Food.findOne({_id: id});
+    },
+    find: function(limit, skip){
+        return models.Food.find().skip(skip).limit(limit);
     }
 }
 
