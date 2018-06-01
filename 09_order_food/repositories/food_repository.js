@@ -12,6 +12,9 @@ var FoodRepository = {
     },
     find: function(limit, skip){
         return models.Food.find().skip(skip).limit(limit);
+    },
+    delete: function(id){
+        return models.Food.deleteMany({_id: id});
     }
 }
 

@@ -159,4 +159,36 @@ router.get("/get_All", function(req, res){
         });
     });
 });
+
+// delete food
+router.delete("/delete/:id", function(req,res){
+    let id = req.params.id;
+    if (!id){
+        return res.status(406).json({
+            error_code: 406,
+            message: "Missing params"
+        });
+    }else{
+        let food_data = food_repo.delete(id);
+        food_data.then(function(data){
+            if (!data){
+                res.status(500).json({
+                    error_code:500,
+                    message: "Could not delete food by id"
+                });
+            }else{
+                res.status(200).json({
+                    code: 200,
+                    message: "Delete food success"
+                });
+            }
+        }).catch(function(error){
+            logger.error(error);
+            res.status(500).json({
+                error_code: 500,
+                message: "Error dele food"
+            });
+        });
+    }
+});
 module.exports = router;
