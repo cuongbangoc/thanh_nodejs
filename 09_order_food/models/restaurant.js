@@ -10,7 +10,10 @@ const restaurant = new Schema({
     },
     adress: String,
     timeOpen: String,
-    menu: [{
+    rating: String,
+    image: String,
+    description: String,
+    food: [{
         type: Schema.Types.ObjectId,
         ref: "Food"
     }],
