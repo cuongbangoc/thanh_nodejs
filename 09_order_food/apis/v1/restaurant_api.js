@@ -105,4 +105,45 @@ router.put("/update/:id", function(req, res){
             });
       });
 });
+
+// Delete restaurant
+router.delete("/delete/:id", function(req, res){
+      let id = req.params.id;
+      let restaurant_data1 = restaurant_repo.findById(id);
+      restaurant_data1.then(function(restaurant){
+            if (!restaurant){
+                  res.status(404).json({
+                        error_code: 404,
+                        message: "Not found restaurant"
+                  });
+            }else{
+                  let restaurant_data2 = restaurant_repo.delete(id);
+                  restaurant_data2.then(function(data){
+                        if (!data){
+                              res.status(500).json({
+                                    error_code: 500,
+                                    message: "Could not delete restaurant"
+                              });
+                        }else{
+                              res.status(200).json({
+                                    code: 200,
+                                    message: "Delete restaurant success"
+                              });
+                        }
+                  }).catch(function(error){
+                        logger.error(error);
+                        res.status(500).json({
+                              error_code:500,
+                              message: "Error delete restaurant"
+                        });
+                  });
+            }
+      }).catch(function(error){
+            logger.error(error);
+            res.status(500).json({
+                  error_code: 500,
+                  message: "Error get restaurant by id"
+            });
+      });
+});
 module.exports = router;

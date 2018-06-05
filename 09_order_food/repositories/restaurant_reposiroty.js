@@ -9,6 +9,9 @@ var RestauranrRepository = {
     },
     findById: function (id){
         return models.Restaurant.findOne({_id: id});
+    },
+    delete: function(id){
+        return models.Restaurant.deleteMany({_id: id});
     }
 }
 
