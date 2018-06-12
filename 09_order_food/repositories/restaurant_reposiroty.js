@@ -12,6 +12,9 @@ var RestauranrRepository = {
     },
     delete: function(id){
         return models.Restaurant.deleteMany({_id: id});
+    },
+    find: function(limit, skip){
+        return models.Restaurant.find().limit(limit).skip(skip);
     }
 }
 

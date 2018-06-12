@@ -146,4 +146,64 @@ router.delete("/delete/:id", function(req, res){
             });
       });
 });
+
+// Get one restaurant
+router.get("/get_one/:id",function(req,res){
+      let id = req.params.id;
+      let restaurant_data = restaurant_repo.findById(id);
+      restaurant_data.then(function(restaurant){
+            if (!restaurant){
+                  res.status(404).json({
+                        error_code: 404,
+                        message: "Could not get restaurant"
+                  });
+            }else{
+                  res.status(200).json({
+                        code: 200,
+                        message: "get restaurant success",
+                        data: restaurant
+                  });
+            }
+      }).catch(function(error){
+            logger.error(error);
+            res.status(500).json({
+                  error_code: 500,
+                  message: "Error get restaurant"
+            });
+      });
+});
+
+// Getall restaurant
+router.get("/get_all", function(req, res){
+      let page = parseInt(req.query.page);
+      let limit = parseInt(req.query.limit);
+
+      if (!page){
+            page = 1;
+      }
+      if (!limit){
+            limit = 1;
+      }
+      let skip = (page-1)*limit;
+      let restaurant_data = restaurant_repo.find(limit, skip);
+      restaurant_data.then(function(data){
+            if (!data){
+                  res.status(404).json({
+                        error_code:404,
+                        message: "Could not get restaurant"
+                  });
+            }else{
+                  res.status(200).json({
+                        message: 200,
+                        data: data
+                  });
+            }
+      }).catch(function(error){
+            logger.error(error);
+            res.status(500).json({
+                  error_code: 500,
+                  message: "Error get all restaurant"
+            });
+      });
+});
 module.exports = router;
