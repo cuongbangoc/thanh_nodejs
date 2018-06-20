@@ -2,6 +2,10 @@
 
 const express = require('express');
 
+const redis = require('./helpers/redis_service');
+
+let a = redis.get_conn();
+
 const fs = require('fs');
 
 // path để làm gì???
