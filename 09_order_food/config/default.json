@@ -17,7 +17,7 @@
     "db": {
         "uri": "mongodb://ds251518.mlab.com:51518/cuongbangoc",
        
-        // "uri": "mongodb://192.168.100.82:27017/cuongbangoc",
+        //"uri": "mongodb://192.168.21.80:27019/cuongbangoc",
         "options": {
             "auth": {
                 "user": "cuongbangoc",
@@ -29,6 +29,10 @@
             "poolSize": 10, // Maintain up to 10 socket connections
             "bufferMaxEntries": 0
         }
+    },
+    "redis": {
+	"host": "0.0.0.0",
+	"port": 6379
     },
     "salt_factor": 12,
     "jwt": {
