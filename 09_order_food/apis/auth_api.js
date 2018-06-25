@@ -5,7 +5,8 @@ const express = require('express'),
     router = express.Router(),
     config = require('config'),
     token_repo = require("../repositories/token_repository"),
-    user_repo = require("../repositories/user_repository");
+    user_repo = require("../repositories/user_repository"),
+    redis = require("../helpers/redis_service");
 
 let password_helper = require("../helpers/password_helper");
 let token_helper = require("../helpers/token_helper");
@@ -52,9 +53,11 @@ router.post("/login", function(req, res) {
         };
 
         // Save token to DB
-        let create_token_data = token_repo.create(token);
+        let create_token_data1 = token_repo.create(token);
 
-        create_token_data.then(function (new_token) {
+        // Save token to Redis
+        redis.get_conn().set(access_token, JSON.stringify(user));
+        create_token_data1.then(function (new_token) {
             return res.status(200).json({
                 error_code: 200,
                 token: access_token
@@ -65,7 +68,8 @@ router.post("/login", function(req, res) {
                 error_code: 500,
                 message: "Error, could not create token"
             });
-        });
+        }); 
+
     }).catch(function (e) {
         logger.error(e);
         res.status(500).json({
