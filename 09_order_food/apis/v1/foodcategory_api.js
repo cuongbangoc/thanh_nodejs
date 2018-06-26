@@ -2,7 +2,8 @@
 const express = require('express'),
       foodcategory_repo = require("../../repositories/foodcategory_repository"),
       logger = require('../../helpers/logger'),
-      router = express.Router();
+      router = express.Router(),
+      redis = require("../../helpers/redis_service");
 
 // Add new Food Category
 router.post("/create", function(req, res){
@@ -14,12 +15,22 @@ router.post("/create", function(req, res){
             message: "missing params"
         });
     }
+
+
+    // save foodcategory to DB
     let create_foodcategory_data = foodcategory_repo.create(params);
-    create_foodcategory_data.then(function(food){
-        if (food){
+    create_foodcategory_data.then(function(foodcategory){
+        if (foodcategory){
+
+            // after save foodcategory to db then get back to data is foodcategory
+            // Save foodcategory to redis
+            redis.get_conn().set(foodcategory._id.toString(), JSON.stringify(foodcategory));
+
+            // Get to client after save to DB and redis
             res.status(200).json({
                 code: 200,
-                message: "Create Food Category success"
+                message: "Create Food Category success",
+                foodcategory: foodcategory
             });
         }else{
             res.status(500).json({
@@ -33,6 +44,8 @@ router.post("/create", function(req, res){
             message: "Create Food Category error"
         });
     });
+
+        
 });
 
 // Update food category
@@ -46,6 +59,9 @@ router.put("/update/:id", function(req, res){
             message: "Missing Params"
         });
     }
+
+    // Get foodcategory from DB to update
+    
     let foodcategory_data_1 = foodcategory_repo.findById(id);
     foodcategory_data_1.then(function(data1){
         if (!data1){
@@ -54,6 +70,8 @@ router.put("/update/:id", function(req, res){
                 message: "Not found foodcategory to update"
             });
         }else{
+
+            // Update foodcategory
             let foodcategory_data_2 = foodcategory_repo.updateFoodCategory(id, params);
             foodcategory_data_2.then(function(data2){
                 if (!data2){
@@ -62,25 +80,25 @@ router.put("/update/:id", function(req, res){
                         message: "Could not update foodcategory"
                     });
                 }else{
+                    // Get foodcategory updated from DB
+                    
                     let foodcategory_data_3 = foodcategory_repo.findById(id);
                     foodcategory_data_3.then(function(data3){
                         if (!data3){
-                            res.status(404).json({
-                                error_code: 404,
-                                message: "Not found foodcategory updated"
+                            return res.status(500).json({
+                                error_code: 500,
+                                message: "Could not get foodcategory updated"
                             });
                         }else{
-                            res.status(200).json({
+                            // After update and save success into DB then save data to redis
+                            // Save foodcategory to redis
+                            redis.get_conn().set(id, JSON.stringify(data3));
+                            return res.status(200).json({
                                 code: 200,
-                                data: data3
+                                message: "Update foodcategory success",
+                                foodcategory: data3
                             });
                         }
-                    }).catch(function(error){
-                        logger.error(error);
-                        res.status(500).json({
-                            error_code: 500,
-                            message: "Error get info foodcategory updated"
-                        });
                     });
                 }
             }).catch(function(error){
@@ -105,36 +123,46 @@ router.delete("/delete/:id",function(req, res){
     let params = req.body;
     let id = req.params.id;
 
-    let foodcategory_data_1 = foodcategory_repo.findById(id);
-    foodcategory_data_1.then(function(food){
-        if (!food){
-            res.status(404).json({
-                error_code: 404,
-                message: "Not found food category to delete"
+    // Before must delete foodcategory in redis.
+    redis.get_conn().del(id, function(error){
+        if (error){
+            return res.status(500).json({
+                error_code:500,
+                message: "could not delete foodcategory from redis"
             });
         }else{
-            food.remove(function(error){
-                if (error){
-                    logger.error(error);
-                    res.status(500).json({
-                        error_code:500,
-                        message: "Could not delete food category by id"
+            let foodcategory_data_1 = foodcategory_repo.findById(id);
+            foodcategory_data_1.then(function(food){
+                if (!food){
+                    res.status(404).json({
+                        error_code: 404,
+                        message: "Not found food category to delete"
                     });
                 }else{
-                    res.status(200).json({
-                        code: 200,
-                        message: "Delete success"
+                    food.remove(function(error){
+                        if (error){
+                            logger.error(error);
+                            res.status(500).json({
+                                error_code:500,
+                                message: "Could not delete food category by id"
+                            });
+                        }else{
+                            res.status(200).json({
+                                code: 200,
+                                message: "Delete success"
+                            });
+                        }
                     });
                 }
+            }).catch(function(error){
+                logger.error(error);
+                res.status(500).json({
+                    error_code:500,
+                    message: "Error delete food category"
+                });
             });
         }
-    }).catch(function(error){
-        logger.error(error);
-        res.status(500).json({
-            error_code:500,
-            message: "Error delete food category"
-        });
-    });
+    });    
 });
 
 // Get all food category with page and limit
