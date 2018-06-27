@@ -203,25 +203,48 @@ router.get("/get_all", function(req, res){
 // Get one food category
 router.get("/get_one/:id", function(req, res){
     let id = req.params.id;
-    let foodcategory_data = foodcategory_repo.findById(id);
-    foodcategory_data.then(function(food){
-        if (food){
-            res.status(200).json({
-                code: 200,
-                data: food
+
+    // Before get data from redis
+    redis.get_conn().get(id, function(error, data){
+        if(error){
+            logger.error(error);
+            console.log("aaaaaaa");
+            return res.status(500).json({
+                error_code: 500,
+                message: "Could not get foodcategory by id"
             });
         }else{
-            res.status(404).json({
-                error_code: 404,
-                message: "Not found food category by ID"
-            });
+            if(data){
+                console.log("BBBBBBBBBBb");
+                return res.status(200).json({
+                    code: 200,
+                    message: "get foodcategory success",
+                    foodcategory: JSON.parse(data)
+                });
+            }else{
+                console.log("CCCCCCCCCCcc");
+                let foodcategory_data = foodcategory_repo.findById(id);
+                foodcategory_data.then(function(food){
+                    if (food){
+                        res.status(200).json({
+                            code: 200,
+                            data: food
+                        });
+                    }else{
+                        res.status(404).json({
+                            error_code: 404,
+                            message: "Not found food category by ID"
+                        });
+                    }
+                }).catch(function(error){
+                    logger.error(error);
+                    res.status(500).json({
+                        error_code: 500,
+                        message: "Error get food category with id"
+                    });
+                });
+            }
         }
-    }).catch(function(error){
-        logger.error(error);
-        res.status(500).json({
-            error_code: 500,
-            message: "Error get food category with id"
-        });
     });
 });
 module.exports = router;
