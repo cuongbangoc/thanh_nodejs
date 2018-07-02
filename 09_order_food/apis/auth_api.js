@@ -14,9 +14,9 @@ let token_helper = require("../helpers/token_helper");
 // Signin
 router.post("/login", function(req, res) {
     let email = req.body.email;
-    let passwords = req.body.password;
+    let password = req.body.password;
 
-    
+    email / 0;
     // Check parameters
     if(!email || !password){
         return res.status(406).json({
